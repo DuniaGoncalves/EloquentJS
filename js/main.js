@@ -88,10 +88,11 @@ function elementFromChar(legend, ch) {
   return element;
 }
 
-function World(map, legend) {
+function World(map, legend, container) {
   var grid = new Grid(map[0].length, map.length);
   this.grid = grid;
   this.legend = legend;
+  this.container = container;
 
   map.forEach(function(line, y) {
     for (var x = 0; x < line.length; x++) {
@@ -137,6 +138,37 @@ Grid.prototype.forEach = function(f, context) {
   }
 };
 
+var worldItems = {
+  "#": 'wall',
+  "o": 'plant-eater',
+  "*": 'plant',
+  "s": 'wall-follower',
+  "@": 'tiger'
+}
+
+function createItems(char){
+  var items = worldItems[char];
+  var output = "<td class='" + items + "'>" +
+               char + "</td>"
+  return output;
+}
+
+World.prototype.toHtmlTable = function() {
+  var table = "<table>";
+  var row = "";
+  for (var y = 0; y < this.grid.height; y++) {
+    row = "<tr>";
+    for (var x = 0; x < this.grid.width; x++) {
+      var element = this.grid.get(new Vector(x, y));
+      row += createItems(charFromElement(element));
+    }
+    row = row + "</tr>";
+    table += row;
+  }
+  table = table + "</table>";
+  return table;
+};
+
 World.prototype.turn = function() {
   var acted = [];
   this.grid.forEach(function(critter, vector) {
@@ -145,6 +177,12 @@ World.prototype.turn = function() {
       this.letAct(critter, vector);
     }
   }, this);
+  this.draw();
+};
+
+World.prototype.draw = function() {
+  this.container.innerHTML = this.toHtmlTable();
+  console.log(this.toString());
 };
 
 World.prototype.letAct = function(critter, vector) {
@@ -230,15 +268,12 @@ WallFollower.prototype.act = function(view) {
 };
 
 // More Lifelike Simulation
-function LifelikeWorld(map, legend) {
-  World.call(this, map, legend);
-}
 
-LifelikeWorld.prototype = Object.create(World.prototype);
+World.prototype = Object.create(World.prototype);
 
 var actionTypes = Object.create(null);
 
-LifelikeWorld.prototype.letAct = function(critter, vector) {
+World.prototype.letAct = function(critter, vector) {
   var action = critter.act(new View(this, vector));
   var handled = action &&
     action.type in actionTypes &&
@@ -330,25 +365,53 @@ PlantEater.prototype.act = function(view) {
   }
 };
 
-var valley = new LifelikeWorld(
-  ['############################',
-   '#####                 ######',
-   '##   ***                **##',
-   '#   *##**         **  O  *##',
-   '#    ***     O    ##**    *#',
-   '#       O         ##***    #',
-   '#                 ##**     #',
-   '#   O       #*             #',
-   '#*          #**       O    #',
-   '#***        ##**    O    **#',
-   '##****     ###***       *###',
-   '############################'],
-  {'#': Wall,
-   'O': PlantEater,
-   '*': Plant}
-);
+function Tiger() {
+  this.energy = 10;
+}
 
-animateWorld(valley);
+Tiger.prototype.act = function(view) {
+  var space = view.find(' ');
+  if (this.energy > 40 && space) {
+    return {type: 'reproduce', direction: space};
+  }
+  var plantEater = view.find('o');
+  if (plantEater) {
+    return {type: 'eat', direction: plantEater};
+  }
+  if (space) {
+    return {type: 'move', direction: space};
+  }
+};
+
+function animate(world) {
+  var container = document.getElementById('#world');
+}
+
+function animateWorld() {
+  var plan =
+    ['############################',
+     '#####   s             ######',
+     '##   ***      @         **##',
+     '#   *##**         **  o  *##',
+     '#    ***     o    ##**    *#',
+     '#       o         ##***    #',
+     '#                 ##**     #',
+     '#   o      @ #*            #',
+     '#*          #**       o    #',
+     '#***        ##**   o @   **#',
+     '##****    s###***       *###',
+     '############################'];
+
+  var container = document.getElementById('world');
+  var world = new World(plan, { '#': Wall, 'o': PlantEater, '*': Plant , 's': WallFollower, '@': Tiger }, container);
+
+  (function loop(){
+    world.turn(container);
+    setTimeout(loop, 1000);
+  })();
+}
+
+animateWorld();
 
 // Exercises FINAL PART NEED TO DO
 
