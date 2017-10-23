@@ -140,10 +140,11 @@ Grid.prototype.forEach = function(f, context) {
 
 var worldItems = {
   "#": 'wall',
-  "o": 'plant-eater',
+  "O": 'plant-eater',
   "*": 'plant',
-  "s": 'wall-follower',
-  "@": 'tiger'
+  "~": 'wall-follower',
+  "@": 'tiger',
+  "s": 'bouncing-critter'
 }
 
 function createItems(char){
@@ -366,7 +367,7 @@ PlantEater.prototype.act = function(view) {
 };
 
 function Tiger() {
-  this.energy = 10;
+  this.energy = 60;
 }
 
 Tiger.prototype.act = function(view) {
@@ -374,7 +375,7 @@ Tiger.prototype.act = function(view) {
   if (this.energy > 40 && space) {
     return {type: 'reproduce', direction: space};
   }
-  var plantEater = view.find('o');
+  var plantEater = view.find('O');
   if (plantEater) {
     return {type: 'eat', direction: plantEater};
   }
@@ -390,20 +391,20 @@ function animate(world) {
 function animateWorld() {
   var plan =
     ['############################',
-     '#####   s             ######',
+     '#####   s      ~    O ######',
      '##   ***      @         **##',
-     '#   *##**         **  o  *##',
-     '#    ***     o    ##**    *#',
-     '#       o         ##***    #',
+     '#   *##**         **  s  *##',
+     '#    ***     O    ##**    *#',
+     '#       O         ##***    #',
      '#                 ##**     #',
-     '#   o      @ #*            #',
-     '#*          #**       o    #',
-     '#***        ##**   o @   **#',
-     '##****    s###***       *###',
+     '#   s      @ #*            #',
+     '#*          #**       O    #',
+     '#***        ##**   s @   **#',
+     '##****    s###***     ~ *###',
      '############################'];
 
   var container = document.getElementById('world');
-  var world = new World(plan, { '#': Wall, 'o': PlantEater, '*': Plant , 's': WallFollower, '@': Tiger }, container);
+  var world = new World(plan, { '#': Wall, 'O': PlantEater, 's': BouncingCritter, '*': Plant , '~': WallFollower, '@': Tiger }, container);
 
   (function loop(){
     world.turn(container);
