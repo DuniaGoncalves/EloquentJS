@@ -343,7 +343,7 @@ Plant.prototype.act = function(view) {
       return {type: 'reproduce', direction: space};
     }
   }
-  if (this.energy < 20) {
+  if (this.energy < 25) {
     return {type: 'grow'};
   }
 };
@@ -354,7 +354,7 @@ function PlantEater() {
 
 PlantEater.prototype.act = function(view) {
   var space = view.find(' ');
-  if (this.energy > 60 && space) {
+  if (this.energy > 40 && space && this.energy < 100) {
     return {type: 'reproduce', direction: space};
   }
   var plant = view.find('*');
@@ -367,12 +367,12 @@ PlantEater.prototype.act = function(view) {
 };
 
 function Tiger() {
-  this.energy = 60;
+  this.energy = 40;
 }
 
 Tiger.prototype.act = function(view) {
   var space = view.find(' ');
-  if (this.energy > 40 && space) {
+  if (this.energy > 80 && space) {
     return {type: 'reproduce', direction: space};
   }
   var plantEater = view.find('O');
@@ -391,25 +391,29 @@ function animate(world) {
 function animateWorld() {
   var plan =
     ['############################',
-     '#####   s      ~    O ######',
+     '#####         ~    O  ######',
      '##   ***      @         **##',
-     '#   *##**         **  s  *##',
+     '#   *##**         **     *##',
      '#    ***     O    ##**    *#',
-     '#       O         ##***    #',
+     '#                 ##***    #',
      '#                 ##**     #',
-     '#   s      @ #*            #',
-     '#*          #**       O    #',
-     '#***        ##**   s @   **#',
+     '#   s       #*             #',
+     '#***        #**         O  #',
+     '#***    O   ##**   s @   **#',
      '##****    s###***     ~ *###',
      '############################'];
 
   var container = document.getElementById('world');
   var world = new World(plan, { '#': Wall, 'O': PlantEater, 's': BouncingCritter, '*': Plant , '~': WallFollower, '@': Tiger }, container);
 
+  var startBtn = document.getElementById('start');
+  var stopBtn = document.getElementById('stop');
   (function loop(){
     world.turn(container);
     setTimeout(loop, 1000);
   })();
+
+
 }
 
 animateWorld();
