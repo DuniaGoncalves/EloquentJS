@@ -269,6 +269,7 @@ WallFollower.prototype.act = function(view) {
 };
 
 // More Lifelike Simulation
+// have tigers follow nearest critters move through grass
 
 World.prototype = Object.create(World.prototype);
 
@@ -337,13 +338,13 @@ function Plant() {
 }
 
 Plant.prototype.act = function(view) {
-  if (this.energy > 15) {
+  if (this.energy > 10 && space) {
     var space = view.find(' ');
     if (space) {
       return {type: 'reproduce', direction: space};
     }
   }
-  if (this.energy < 25) {
+  if (this.energy < 15) {
     return {type: 'grow'};
   }
 };
@@ -354,7 +355,7 @@ function PlantEater() {
 
 PlantEater.prototype.act = function(view) {
   var space = view.find(' ');
-  if (this.energy > 40 && space && this.energy < 100) {
+  if (this.energy > 40 && space && this.energy < 85) {
     return {type: 'reproduce', direction: space};
   }
   var plant = view.find('*');
@@ -372,7 +373,7 @@ function Tiger() {
 
 Tiger.prototype.act = function(view) {
   var space = view.find(' ');
-  if (this.energy > 80 && space) {
+  if (this.energy > 55 && space) {
     return {type: 'reproduce', direction: space};
   }
   var plantEater = view.find('O');
