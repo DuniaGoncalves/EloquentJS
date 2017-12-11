@@ -368,7 +368,7 @@ PlantEater.prototype.act = function(view) {
 };
 
 function Tiger() {
-  this.energy = 40;
+  this.energy = 30;
 }
 
 Tiger.prototype.act = function(view) {
