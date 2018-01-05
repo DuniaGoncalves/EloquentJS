@@ -75,6 +75,27 @@ function evaluate(expr, env) {
       }));
 
   }
-}
+};
 
 var specialForms = Object.create(null);
+
+specialForms["if"] = function(args, env) {
+  if (args.length != 3) {
+    throw new SyntaxError("Bad number of args to if");
+  }
+
+  if (evaluate(args[0], env) !== false) {
+    return evaluate(args[1], env);
+  } else {
+    return evaluate(args[2], env);
+  }
+};
+
+specialForms["define"] = function(args, env) {
+  if (args.length != 2 || args[0].type != "word") {
+    throw new SyntaxError("Bad use of define");
+  }
+  var value = evaluate(args[1], env);
+  env[args[0].name] = value;
+  return value;
+};
