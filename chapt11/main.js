@@ -99,3 +99,27 @@ specialForms["define"] = function(args, env) {
   env[args[0].name] = value;
   return value;
 };
+
+var topEnv = Object = Object.create(null);
+
+topEnv["true"] = true;
+topEnv["false"] = false;
+
+var prog = parse("if(true, false, true)");
+// console.log(evaluate(prog, topEnv));
+
+["+", "-", "*", "/", "==", "<", ">"].forEach(function(op) {
+  topEnv[op] = new Function("a,b", "return a " + op + " b;");
+});
+
+topEnv["print"] function(value) {
+  console.log(value);
+  return value;
+};
+
+function run() {
+  var env = Object.create(topEnv);
+  var program = Array.prototype.slice
+    .call(arguments, 0).join("\n");
+  return evaluate(parse(program), env);
+};
