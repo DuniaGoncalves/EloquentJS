@@ -1,0 +1,9 @@
+{
+  "name": "new-world-package",
+  "version": "1.0.0",
+  "description": "first stab at it",
+  "main": "index.js",
+  "repository": "https://github.com/DuniaGoncalves/EloquentJS",
+  "author": "Dunia",
+  "license": "MIT"
+}
