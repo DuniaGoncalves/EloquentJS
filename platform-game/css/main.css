@@ -1,5 +1,6 @@
 .background {
-  background: rgb(52, 166, 251);
+  background: url("../img/storm.jpeg");
+  background-size: contain;
   table-layout: fixed;
   border-spacing: 0;
 }
@@ -9,11 +10,13 @@
 }
 
 .lava {
-  background: rgb(255, 100, 100);
+  background: url("../img/lava.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .wall {
-  background: white;
+  background: url("../img/brick.jpg");
 }
 
 .actor {
@@ -21,7 +24,8 @@
 }
 
 .coin {
-  background: rgb(241, 229, 89);
+  background: gold;
+  border-radius: 50%;
 }
 
 .player {
